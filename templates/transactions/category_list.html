@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}دسته‌بندی‌ها{% endblock %}
+
+{% block content %}
+<h2>دسته‌بندی‌ها</h2>
+<p><a class="btn" href="{% url 'transactions:category_create' %}">+ دسته جدید</a></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>نام</th>
+            <th>نوع</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cat in categories %}
+        <tr>
+            <td>{{ cat.name }}</td>
+            <td>{{ cat.get_category_type_display }}</td>
+            <td>
+                <a href="{% url 'transactions:category_edit' cat.pk %}">ویرایش</a>
+                <a href="{% url 'transactions:category_delete' cat.pk %}">حذف</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">دسته‌بندی وجود ندارد.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
