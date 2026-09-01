@@ -1,14 +1,12 @@
 from django.contrib import messages
 from django.db.models import Q
-from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from core.dates import jalali_to_gregorian
-from core.forms import JalaliDateField
 from core.mixins import UserOwnedMixin
 from transactions.forms import CategoryForm, TransactionForm
-from transactions.models import CategoryType, Transaction, TransactionCategory, TransactionKind
+from transactions.models import Transaction, TransactionCategory, TransactionKind
 
 
 class TransactionListView(UserOwnedMixin, ListView):
@@ -174,15 +172,3 @@ class CategoryDeleteView(UserOwnedMixin, DeleteView):
     def form_valid(self, form):
         messages.success(self.request, "دسته‌بندی با موفقیت حذف شد.")
         return super().form_valid(form)
-
-
-def categories_by_type(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({"error": "Unauthorized"}, status=401)
-    cat_type = request.GET.get("type")
-    if cat_type not in (CategoryType.INCOME, CategoryType.EXPENSE):
-        return JsonResponse({"categories": []})
-    cats = TransactionCategory.objects.filter(user=request.user, category_type=cat_type)
-    return JsonResponse({
-        "categories": [{"id": c.id, "name": c.name} for c in cats],
-    })

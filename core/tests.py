@@ -8,7 +8,7 @@ from django.urls import reverse
 from banking.models import BankCard, Transfer
 from banking.services.transfers import create_transfer, delete_transfer, update_transfer
 from core.dates import gregorian_to_jalali, jalali_to_gregorian
-from transactions.models import CategoryType, Transaction, TransactionCategory, TransactionKind
+from transactions.models import CategoryType, Transaction, TransactionCategory
 from transactions.selectors import category_breakdown, total_expense, total_income, transactions_in_range
 
 User = get_user_model()

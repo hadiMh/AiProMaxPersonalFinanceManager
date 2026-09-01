@@ -13,3 +13,4 @@ build/
 .env
 .idea/
 .vscode/
+.git_staging_full/

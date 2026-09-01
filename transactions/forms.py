@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -32,8 +30,21 @@ class TransactionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user:
             self.fields["card"].queryset = BankCard.objects.filter(user=user, is_active=True)
-            self.fields["category"].queryset = TransactionCategory.objects.filter(user=user)
-            self.fields["category"].required = False
+            categories = TransactionCategory.objects.filter(user=user)
+            category_field = self.fields["category"]
+            category_field.queryset = categories
+            category_field.required = False
+            category_field.choices = [("", "---------")]
+            income = categories.filter(category_type=CategoryType.INCOME)
+            expense = categories.filter(category_type=CategoryType.EXPENSE)
+            if income.exists():
+                category_field.choices.append(
+                    (CategoryType.INCOME.label, [(c.pk, c.name) for c in income])
+                )
+            if expense.exists():
+                category_field.choices.append(
+                    (CategoryType.EXPENSE.label, [(c.pk, c.name) for c in expense])
+                )
 
     def clean_amount(self):
         amount = self.cleaned_data["amount"]

@@ -3,7 +3,6 @@ from datetime import date, datetime, timedelta
 import jdatetime
 
 
-JALALI_DATE_FORMAT = "%Y/%m/%d"
 JALALI_DISPLAY_FORMAT = "%Y/%m/%d"
 
 
