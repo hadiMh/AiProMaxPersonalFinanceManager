@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load jalali_tags %}
+
+{% block title %}داشبورد ماهانه{% endblock %}
+
+{% block content %}
+<h2>داشبورد ماهانه — {{ month_name }} {{ year }}</h2>
+
+<form method="get" class="filters">
+    <label>سال: <input type="number" name="year" value="{{ year }}"></label>
+    <label>ماه:
+        <select name="month">
+            {% for value, label in month_choices %}
+            <option value="{{ value }}" {% if month == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <button type="submit">نمایش</button>
+</form>
+
+<div class="summary-box">
+    <p>بازه: {{ start_date|jalali }} تا {{ end_date|jalali }}</p>
+    <p><strong>مجموع درآمد:</strong> <span class="positive">{{ total_income|money }}</span></p>
+    <p><strong>مجموع هزینه:</strong> <span class="negative">{{ total_expense|money }}</span></p>
+    <p><strong>خالص:</strong> {{ net|money }}</p>
+    <p><strong>تعداد تراکنش:</strong> {{ transaction_count }}</p>
+    <p><strong>مجموع موجودی کارت‌ها:</strong> {{ total_balance|money }}</p>
+    <p><strong>بیشترین هزینه:</strong>
+        {% if highest_expense_category %}
+        {{ highest_expense_category.name }} — <span class="negative">{{ highest_expense_category.total|money }}</span>
+        {% else %}—{% endif %}
+    </p>
+    <p><strong>بیشترین درآمد:</strong>
+        {% if highest_income_category %}
+        {{ highest_income_category.name }} — <span class="positive">{{ highest_income_category.total|money }}</span>
+        {% else %}—{% endif %}
+    </p>
+</div>
+
+<h3>موجودی هر کارت</h3>
+<table>
+    <thead><tr><th>کارت</th><th>موجودی</th></tr></thead>
+    <tbody>
+        {% for c in cards %}
+        <tr><td>{{ c.title }}</td><td>{{ c.balance|money }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>هزینه بر اساس دسته</h3>
+<table>
+    <thead><tr><th>دسته</th><th>مبلغ</th><th>تعداد</th></tr></thead>
+    <tbody>
+        {% for row in expense_breakdown %}
+        <tr><td>{{ row.name }}</td><td>{{ row.total|money }}</td><td>{{ row.count }}</td></tr>
+        {% empty %}
+        <tr><td colspan="3">داده‌ای نیست</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="chart-container">
+    <canvas id="expenseChart"></canvas>
+</div>
+
+<h3>درآمد بر اساس دسته</h3>
+<table>
+    <thead><tr><th>دسته</th><th>مبلغ</th><th>تعداد</th></tr></thead>
+    <tbody>
+        {% for row in income_breakdown %}
+        <tr><td>{{ row.name }}</td><td>{{ row.total|money }}</td><td>{{ row.count }}</td></tr>
+        {% empty %}
+        <tr><td colspan="3">داده‌ای نیست</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="chart-container">
+    <canvas id="incomeChart"></canvas>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    var expenseData = {{ expense_chart|safe }};
+    var incomeData = {{ income_chart|safe }};
+    var chartOptions = {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: {
+                ticks: {
+                    callback: function (value) {
+                        return Number(value).toLocaleString('en-US');
+                    }
+                }
+            }
+        }
+    };
+    if (expenseData.length) {
+        new Chart(document.getElementById('expenseChart'), {
+            type: 'bar',
+            data: {
+                labels: expenseData.map(function (d) { return d.label; }),
+                datasets: [{ label: 'هزینه', data: expenseData.map(function (d) { return d.value; }), backgroundColor: '#cc6666' }]
+            },
+            options: chartOptions
+        });
+    }
+    if (incomeData.length) {
+        new Chart(document.getElementById('incomeChart'), {
+            type: 'bar',
+            data: {
+                labels: incomeData.map(function (d) { return d.label; }),
+                datasets: [{ label: 'درآمد', data: incomeData.map(function (d) { return d.value; }), backgroundColor: '#66aa66' }]
+            },
+            options: chartOptions
+        });
+    }
+})();
+</script>
+{% endblock %}
