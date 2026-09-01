@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}ویرایش کارت{% else %}کارت جدید{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if object %}ویرایش کارت{% else %}کارت جدید{% endif %}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">ذخیره</button>
+    <a class="btn" href="{% url 'banking:card_list' %}">انصراف</a>
+</form>
+{% endblock %}

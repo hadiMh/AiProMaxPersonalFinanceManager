@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load jalali_tags %}
+
+{% block title %}{{ card.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ card.title }}</h2>
+<div class="summary-box">
+    <p><strong>بانک:</strong> {{ card.bank_name|default:"—" }}</p>
+    <p><strong>شماره کارت:</strong> {{ card.card_number|mask_card }}</p>
+    <p><strong>شماره حساب:</strong> {{ card.account_number|default:"—" }}</p>
+    <p><strong>موجودی:</strong> {{ card.balance|money }}</p>
+    <p><strong>مجموع درآمد:</strong> <span class="positive">{{ income_total|money }}</span></p>
+    <p><strong>مجموع هزینه:</strong> <span class="negative">{{ expense_total|money }}</span></p>
+</div>
+
+<h3>تراکنش‌های اخیر</h3>
+<table>
+    <thead>
+        <tr>
+            <th>تاریخ</th>
+            <th>عنوان</th>
+            <th>دسته</th>
+            <th>مبلغ</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tx in recent_transactions %}
+        <tr>
+            <td>{{ tx.transaction_date|jalali }}</td>
+            <td>
+                {{ tx.title }}
+                {% if tx.transaction_kind == 'transfer' %}<span class="transfer-label">(انتقال)</span>{% endif %}
+            </td>
+            <td>{{ tx.category.name|default:"—" }}</td>
+            <td class="{% if tx.amount > 0 %}positive{% else %}negative{% endif %}">
+                {% if tx.amount > 0 %}+{% endif %}{{ tx.amount|money }}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">تراکنشی وجود ندارد.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p><a href="{% url 'banking:card_list' %}">بازگشت</a></p>
+{% endblock %}

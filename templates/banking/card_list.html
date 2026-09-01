@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load jalali_tags %}
+
+{% block title %}کارت‌ها{% endblock %}
+
+{% block content %}
+<h2>کارت‌ها</h2>
+<p><a class="btn" href="{% url 'banking:card_create' %}">+ کارت جدید</a></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>عنوان</th>
+            <th>بانک</th>
+            <th>شماره کارت</th>
+            <th>شماره حساب</th>
+            <th>موجودی</th>
+            <th>وضعیت</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for card in cards %}
+        <tr>
+            <td data-label="عنوان"><a href="{% url 'banking:card_detail' card.pk %}">{{ card.title }}</a></td>
+            <td data-label="بانک">{{ card.bank_name|default:"—" }}</td>
+            <td data-label="شماره کارت">{{ card.card_number|mask_card }}</td>
+            <td data-label="شماره حساب">{{ card.account_number|default:"—" }}</td>
+            <td data-label="موجودی">{{ card.balance|money }}</td>
+            <td data-label="وضعیت">{% if card.is_active %}فعال{% else %}غیرفعال{% endif %}</td>
+            <td data-label="عملیات"><a href="{% url 'banking:card_edit' card.pk %}">ویرایش</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">کارتی ثبت نشده است.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
