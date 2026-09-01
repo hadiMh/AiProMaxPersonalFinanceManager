@@ -1,5 +1,11 @@
 # Personal Finance Manager | مدیریت مالی شخصی
 
+> **Bootcamp project | پروژه بوت‌کمپ**
+>
+> This repository is part of a specialized AI training bootcamp for programmers. You receive a working Django application with a deliberately simple interface. **Your goal is to use AI coding tools to design and redesign its appearance and user experience.**
+>
+> این پروژه بخشی از **بوت‌کمپ تخصصی آموزش هوش مصنوعی به برنامه‌نویسان** است. شما این برنامه Django آماده را دریافت می‌کنید و **هدف این است که با استفاده از هوش مصنوعی، ظاهر و تجربه کاربری آن را طراحی کنید.**
+
 ## Choose a language | انتخاب زبان
 
 - [🇬🇧 English](#english)
@@ -15,7 +21,7 @@
 
 Personal Finance Manager is a Persian, right-to-left Django web application for recording and reviewing personal financial activity. It provides a simple interface for managing bank cards, income, expenses, transfers, and financial reports. Dates are displayed and entered using the Jalali calendar.
 
-The project is intended for learning and local use. Its deliberately simple interface also makes it a useful starting point for practicing UI redesign with AI coding tools.
+As a bootcamp exercise, the backend and core features are ready to run locally; the intentionally plain interface is your canvas for AI-assisted UI and UX design.
 
 ### Features
 
@@ -124,7 +130,7 @@ python manage.py test
 
 <p>مدیریت مالی شخصی یک برنامه وب فارسی و راست‌چین است که با Django ساخته شده است. با استفاده از این برنامه می‌توانید فعالیت‌های مالی شخصی خود را ثبت و بررسی کنید؛ از مدیریت کارت‌های بانکی و موجودی نقدی گرفته تا ثبت درآمد، هزینه، انتقال وجه و مشاهده گزارش‌های مالی. ورود و نمایش تاریخ‌ها نیز بر اساس تقویم شمسی انجام می‌شود.</p>
 
-<p>این پروژه برای یادگیری و اجرای محلی طراحی شده است. رابط کاربری ساده‌ی آن، نقطه شروع مناسبی برای تمرین بازطراحی رابط با ابزارهای کدنویسی هوش مصنوعی نیز محسوب می‌شود.</p>
+<p>در این بوت‌کمپ، بخش backend و امکانات اصلی آماده اجرا هستند؛ رابط کاربری عمداً ساده نگه داشته شده تا بتوانید با کمک هوش مصنوعی، ظاهر و تجربه کاربری آن را طراحی و بازطراحی کنید.</p>
 
 <h3>امکانات پروژه</h3>
 
