@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_edit %}ویرایش انتقال{% else %}انتقال جدید{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if is_edit %}ویرایش انتقال{% else %}انتقال جدید{% endif %}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">ذخیره</button>
+    <a class="btn" href="{% url 'banking:transfer_list' %}">انصراف</a>
+</form>
+{% endblock %}

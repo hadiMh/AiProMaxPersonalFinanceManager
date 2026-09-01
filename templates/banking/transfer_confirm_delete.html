@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load jalali_tags %}
+
+{% block title %}حذف انتقال{% endblock %}
+
+{% block content %}
+<h2>حذف انتقال</h2>
+<p>آیا از حذف انتقال زیر مطمئن هستید؟</p>
+<div class="summary-box">
+    <p>از: {{ object.from_card.title }} → به: {{ object.to_card.title }}</p>
+    <p>مبلغ: {{ object.amount|money }}</p>
+    <p>تاریخ: {{ object.transfer_date|jalali }}</p>
+</div>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">بله، حذف شود</button>
+    <a class="btn" href="{% url 'banking:transfer_list' %}">انصراف</a>
+</form>
+{% endblock %}

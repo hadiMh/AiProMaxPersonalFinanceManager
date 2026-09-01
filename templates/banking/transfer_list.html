@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load jalali_tags %}
+
+{% block title %}انتقال‌ها{% endblock %}
+
+{% block content %}
+<h2>انتقال‌ها</h2>
+<p><a class="btn" href="{% url 'banking:transfer_create' %}">+ انتقال جدید</a></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>تاریخ</th>
+            <th>از کارت</th>
+            <th>به کارت</th>
+            <th>مبلغ</th>
+            <th>توضیحات</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in transfers %}
+        <tr>
+            <td data-label="تاریخ">{{ t.transfer_date|jalali }}</td>
+            <td data-label="از">{{ t.from_card.title }}</td>
+            <td data-label="به">{{ t.to_card.title }}</td>
+            <td data-label="مبلغ">{{ t.amount|money }}</td>
+            <td data-label="توضیحات">{{ t.description|default:"—" }}</td>
+            <td data-label="عملیات">
+                <a href="{% url 'banking:transfer_edit' t.pk %}">ویرایش</a>
+                <a href="{% url 'banking:transfer_delete' t.pk %}">حذف</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">انتقالی ثبت نشده است.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
