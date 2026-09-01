@@ -1,0 +1,212 @@
+# Personal Finance Manager | مدیریت مالی شخصی
+
+## Choose a language | انتخاب زبان
+
+- [🇬🇧 English](#english)
+- [🇮🇷 فارسی](#فارسی)
+
+---
+
+<a id="english"></a>
+
+## 🇬🇧 English
+
+### About the project
+
+Personal Finance Manager is a Persian, right-to-left Django web application for recording and reviewing personal financial activity. It provides a simple interface for managing bank cards, income, expenses, transfers, and financial reports. Dates are displayed and entered using the Jalali calendar.
+
+The project is intended for learning and local use. Its deliberately simple interface also makes it a useful starting point for practicing UI redesign with AI coding tools.
+
+### Features
+
+- User authentication
+- Separate financial data for each user
+- Bank card and cash-wallet management
+- Income and expense registration
+- Custom income and expense categories
+- Transfers between cards and cash
+- Automatic card-balance calculation
+- Weekly and monthly financial dashboards
+- Income and expense summaries by category
+- Recent transaction lists and financial charts
+- Jalali date input and display
+- Responsive right-to-left interface
+- Demo-data generation for quick evaluation
+
+### Requirements
+
+- Python 3.10 or newer
+- Git
+- Internet access during dependency installation
+
+### Local setup
+
+Clone the repository and enter its directory:
+
+```bash
+git clone https://github.com/hadiMh/AiProMaxPersonalFinanceManager.git
+cd AiProMaxPersonalFinanceManager
+```
+
+Create and activate a virtual environment.
+
+On macOS or Linux:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+On Windows PowerShell:
+
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+Install the dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+On macOS or Linux, if the `python` command is unavailable, use `python3` instead.
+
+Create the local database tables:
+
+```bash
+python manage.py migrate
+```
+
+Create a demo user and sample financial data:
+
+```bash
+python manage.py seed_demo
+```
+
+Run the development server:
+
+```bash
+python manage.py runserver
+```
+
+Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your browser and sign in with:
+
+```text
+Username: demo
+Password: demo1234
+```
+
+Press `Ctrl+C` in the terminal to stop the server. Run `python manage.py runserver` again whenever you want to start the application later. Remember to activate the virtual environment first.
+
+### Run the tests
+
+```bash
+python manage.py test
+```
+
+### Notes
+
+- The project uses SQLite locally, so no separate database server is required.
+- The local `db.sqlite3` file is generated on your computer and is not committed to Git.
+- The Jalali date picker and dashboard charts load browser assets from public CDNs, so those interface elements require an internet connection.
+- This configuration is intended for learning and local development, not direct production deployment.
+
+---
+
+<a id="فارسی"></a>
+
+<div dir="rtl" align="right">
+
+<h2>🇮🇷 فارسی</h2>
+
+<h3>معرفی پروژه</h3>
+
+<p>مدیریت مالی شخصی یک برنامه وب فارسی و راست‌چین است که با Django ساخته شده است. با استفاده از این برنامه می‌توانید فعالیت‌های مالی شخصی خود را ثبت و بررسی کنید؛ از مدیریت کارت‌های بانکی و موجودی نقدی گرفته تا ثبت درآمد، هزینه، انتقال وجه و مشاهده گزارش‌های مالی. ورود و نمایش تاریخ‌ها نیز بر اساس تقویم شمسی انجام می‌شود.</p>
+
+<p>این پروژه برای یادگیری و اجرای محلی طراحی شده است. رابط کاربری ساده‌ی آن، نقطه شروع مناسبی برای تمرین بازطراحی رابط با ابزارهای کدنویسی هوش مصنوعی نیز محسوب می‌شود.</p>
+
+<h3>امکانات پروژه</h3>
+
+<ul>
+  <li>ورود و خروج کاربر</li>
+  <li>جداسازی کامل اطلاعات مالی هر کاربر</li>
+  <li>مدیریت کارت‌های بانکی و موجودی نقدی</li>
+  <li>ثبت درآمد و هزینه</li>
+  <li>ساخت و مدیریت دسته‌بندی‌های درآمد و هزینه</li>
+  <li>انتقال وجه بین کارت‌ها و موجودی نقدی</li>
+  <li>محاسبه خودکار موجودی هر کارت</li>
+  <li>داشبورد مالی هفتگی و ماهانه</li>
+  <li>نمایش خلاصه درآمد و هزینه بر اساس دسته‌بندی</li>
+  <li>نمایش تراکنش‌های اخیر و نمودارهای مالی</li>
+  <li>ورود و نمایش تاریخ شمسی</li>
+  <li>رابط راست‌چین و واکنش‌گرا</li>
+  <li>ساخت خودکار کاربر و اطلاعات نمایشی برای آزمایش سریع پروژه</li>
+</ul>
+
+<h3>پیش‌نیازها</h3>
+
+<ul>
+  <li>Python نسخه 3.10 یا جدیدتر</li>
+  <li>Git</li>
+  <li>دسترسی به اینترنت هنگام نصب وابستگی‌ها</li>
+</ul>
+
+<h3>راه‌اندازی روی سیستم شخصی</h3>
+
+<p>ابتدا مخزن پروژه را کلون کنید و وارد پوشه آن شوید:</p>
+
+<pre dir="ltr" align="left"><code class="language-bash">git clone https://github.com/hadiMh/AiProMaxPersonalFinanceManager.git
+cd AiProMaxPersonalFinanceManager</code></pre>
+
+<p>یک محیط مجازی بسازید و آن را فعال کنید.</p>
+
+<p>در macOS یا Linux:</p>
+
+<pre dir="ltr" align="left"><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate</code></pre>
+
+<p>در Windows PowerShell:</p>
+
+<pre dir="ltr" align="left"><code class="language-powershell">py -m venv .venv
+.venv\Scripts\Activate.ps1</code></pre>
+
+<p>وابستگی‌های پروژه را نصب کنید:</p>
+
+<pre dir="ltr" align="left"><code class="language-bash">python -m pip install -r requirements.txt</code></pre>
+
+<p>اگر در macOS یا Linux دستور <code dir="ltr">python</code> شناخته نشد، در دستورهای بعدی نیز به‌جای آن از <code dir="ltr">python3</code> استفاده کنید.</p>
+
+<p>جدول‌های دیتابیس محلی را بسازید:</p>
+
+<pre dir="ltr" align="left"><code class="language-bash">python manage.py migrate</code></pre>
+
+<p>کاربر دمو و اطلاعات مالی نمونه را ایجاد کنید:</p>
+
+<pre dir="ltr" align="left"><code class="language-bash">python manage.py seed_demo</code></pre>
+
+<p>سرور توسعه را اجرا کنید:</p>
+
+<pre dir="ltr" align="left"><code class="language-bash">python manage.py runserver</code></pre>
+
+<p>حالا آدرس <a href="http://127.0.0.1:8000/" dir="ltr">http://127.0.0.1:8000/</a> را در مرورگر باز کنید و با اطلاعات زیر وارد شوید:</p>
+
+<pre dir="ltr" align="left"><code>Username: demo
+Password: demo1234</code></pre>
+
+<p>برای متوقف‌کردن سرور، در ترمینال کلیدهای <code dir="ltr">Ctrl+C</code> را فشار دهید. برای اجرای مجدد برنامه کافی است ابتدا محیط مجازی را فعال کنید و سپس دوباره دستور <code dir="ltr">python manage.py runserver</code> را اجرا کنید.</p>
+
+<h3>اجرای تست‌ها</h3>
+
+<pre dir="ltr" align="left"><code class="language-bash">python manage.py test</code></pre>
+
+<h3>نکات</h3>
+
+<ul>
+  <li>پروژه در حالت محلی از SQLite استفاده می‌کند و به نصب دیتابیس جداگانه نیاز ندارد.</li>
+  <li>فایل محلی <code dir="ltr">db.sqlite3</code> روی سیستم شما ساخته می‌شود و داخل Git قرار نمی‌گیرد.</li>
+  <li>انتخابگر تاریخ شمسی و نمودارهای داشبورد، فایل‌های موردنیاز مرورگر را از CDN دریافت می‌کنند؛ بنابراین این بخش‌ها به اتصال اینترنت نیاز دارند.</li>
+  <li>تنظیمات فعلی برای آموزش و توسعه محلی مناسب است و نباید بدون آماده‌سازی‌های امنیتی مستقیماً در محیط واقعی منتشر شود.</li>
+</ul>
+
+</div>
