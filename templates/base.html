@@ -2,10 +2,30 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}مدیریت مالی شخصی{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    {% include "includes/messages.html" %}
-    {% block content %}{% endblock %}
+    {% if user.is_authenticated %}
+    <header>
+        <h1>مدیریت مالی شخصی</h1>
+        {% include "includes/navigation.html" %}
+    </header>
+    {% endif %}
+
+    <main>
+        {% include "includes/messages.html" %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://unpkg.com/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,12 @@
+<nav>
+    <a href="{% url 'dashboard:weekly' %}">داشبورد هفتگی</a>
+    <a href="{% url 'dashboard:monthly' %}">داشبورد ماهانه</a>
+    <a href="{% url 'banking:card_list' %}">کارت‌ها</a>
+    <a href="{% url 'transactions:list' %}">تراکنش‌ها</a>
+    <a href="{% url 'banking:transfer_list' %}">انتقال‌ها</a>
+    <a href="{% url 'transactions:category_list' %}">دسته‌بندی‌ها</a>
+    <form class="nav-logout" method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit">خروج ({{ user.username }})</button>
+    </form>
+</nav>
