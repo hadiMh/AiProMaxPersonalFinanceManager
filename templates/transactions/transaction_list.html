@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load jalali_tags query_tags %}
+
+{% block title %}تراکنش‌ها{% endblock %}
+
+{% block content %}
+<h2>تراکنش‌ها</h2>
+<p><a class="btn" href="{% url 'transactions:create' %}">+ تراکنش جدید</a></p>
+
+<div class="filters">
+    <form method="get">
+        <p>
+            <label>کارت:
+                <select name="card">
+                    <option value="">همه</option>
+                    {% for c in cards %}
+                    <option value="{{ c.pk }}" {% if filters.card == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>دسته:
+                <select name="category">
+                    <option value="">همه</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.pk }}" {% if filters.category == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>نوع:
+                <select name="kind">
+                    <option value="">همه</option>
+                    <option value="income" {% if filters.kind == 'income' %}selected{% endif %}>درآمد</option>
+                    <option value="expense" {% if filters.kind == 'expense' %}selected{% endif %}>هزینه</option>
+                    <option value="transfer" {% if filters.kind == 'transfer' %}selected{% endif %}>انتقال</option>
+                </select>
+            </label>
+        </p>
+        <p>
+            <label>از تاریخ: <input type="text" name="date_from" class="jalali-date-input" value="{{ filters.date_from }}"></label>
+            <label>تا تاریخ: <input type="text" name="date_to" class="jalali-date-input" value="{{ filters.date_to }}"></label>
+            <label>جستجو: <input type="text" name="q" value="{{ filters.q }}"></label>
+            <button type="submit">فیلتر</button>
+        </p>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>تاریخ</th>
+            <th>عنوان</th>
+            <th>کارت</th>
+            <th>دسته</th>
+            <th>مبلغ</th>
+            <th>توضیحات</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tx in transactions %}
+        <tr>
+            <td data-label="تاریخ">{{ tx.transaction_date|jalali }}</td>
+            <td data-label="عنوان">
+                {{ tx.title }}
+                {% if tx.transaction_kind == 'transfer' %}<span class="transfer-label">(انتقال)</span>{% endif %}
+            </td>
+            <td data-label="کارت">{{ tx.card.title }}</td>
+            <td data-label="دسته">{{ tx.category.name|default:"—" }}</td>
+            <td data-label="مبلغ" class="{% if tx.amount > 0 %}positive{% else %}negative{% endif %}">
+                {% if tx.amount > 0 %}+{% endif %}{{ tx.amount|money }}
+            </td>
+            <td data-label="توضیحات">{{ tx.description|default:"—"|truncatewords:8 }}</td>
+            <td data-label="عملیات">
+                {% if tx.transaction_kind != 'transfer' %}
+                <a href="{% url 'transactions:edit' tx.pk %}">ویرایش</a>
+                <a href="{% url 'transactions:delete' tx.pk %}">حذف</a>
+                {% else %}—{% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">تراکنشی یافت نشد.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if page_obj.has_other_pages %}
+<p>
+    {% if page_obj.has_previous %}<a href="{% query_string page=page_obj.previous_page_number %}">قبلی</a>{% endif %}
+    صفحه {{ page_obj.number }} از {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}<a href="{% query_string page=page_obj.next_page_number %}">بعدی</a>{% endif %}
+</p>
+{% endif %}
+{% endblock %}

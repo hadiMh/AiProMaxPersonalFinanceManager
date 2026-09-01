@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load jalali_tags %}
+
+{% block title %}حذف تراکنش{% endblock %}
+
+{% block content %}
+<h2>حذف تراکنش</h2>
+<p>آیا از حذف این تراکنش مطمئن هستید؟</p>
+<div class="summary-box">
+    <p>عنوان: {{ object.title }}</p>
+    <p>مبلغ: {{ object.amount|money }}</p>
+    <p>تاریخ: {{ object.transaction_date|jalali }}</p>
+</div>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">بله، حذف شود</button>
+    <a class="btn" href="{% url 'transactions:list' %}">انصراف</a>
+</form>
+{% endblock %}
