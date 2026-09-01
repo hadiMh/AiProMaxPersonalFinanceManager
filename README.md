@@ -156,49 +156,103 @@ python manage.py test
 
 <p>ابتدا مخزن پروژه را کلون کنید و وارد پوشه آن شوید:</p>
 
-<pre dir="ltr" align="left"><code class="language-bash">git clone https://github.com/hadiMh/AiProMaxPersonalFinanceManager.git
-cd AiProMaxPersonalFinanceManager</code></pre>
+</div>
+
+```bash
+git clone https://github.com/hadiMh/AiProMaxPersonalFinanceManager.git
+cd AiProMaxPersonalFinanceManager
+```
+
+<div dir="rtl" align="right">
 
 <p>یک محیط مجازی بسازید و آن را فعال کنید.</p>
 
 <p>در macOS یا Linux:</p>
 
-<pre dir="ltr" align="left"><code class="language-bash">python3 -m venv .venv
-source .venv/bin/activate</code></pre>
+</div>
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+<div dir="rtl" align="right">
 
 <p>در Windows PowerShell:</p>
 
-<pre dir="ltr" align="left"><code class="language-powershell">py -m venv .venv
-.venv\Scripts\Activate.ps1</code></pre>
+</div>
+
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+<div dir="rtl" align="right">
 
 <p>وابستگی‌های پروژه را نصب کنید:</p>
 
-<pre dir="ltr" align="left"><code class="language-bash">python -m pip install -r requirements.txt</code></pre>
+</div>
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+<div dir="rtl" align="right">
 
 <p>اگر در macOS یا Linux دستور <code dir="ltr">python</code> شناخته نشد، در دستورهای بعدی نیز به‌جای آن از <code dir="ltr">python3</code> استفاده کنید.</p>
 
 <p>جدول‌های دیتابیس محلی را بسازید:</p>
 
-<pre dir="ltr" align="left"><code class="language-bash">python manage.py migrate</code></pre>
+</div>
+
+```bash
+python manage.py migrate
+```
+
+<div dir="rtl" align="right">
 
 <p>کاربر دمو و اطلاعات مالی نمونه را ایجاد کنید:</p>
 
-<pre dir="ltr" align="left"><code class="language-bash">python manage.py seed_demo</code></pre>
+</div>
+
+```bash
+python manage.py seed_demo
+```
+
+<div dir="rtl" align="right">
 
 <p>سرور توسعه را اجرا کنید:</p>
 
-<pre dir="ltr" align="left"><code class="language-bash">python manage.py runserver</code></pre>
+</div>
+
+```bash
+python manage.py runserver
+```
+
+<div dir="rtl" align="right">
 
 <p>حالا آدرس <a href="http://127.0.0.1:8000/" dir="ltr">http://127.0.0.1:8000/</a> را در مرورگر باز کنید و با اطلاعات زیر وارد شوید:</p>
 
-<pre dir="ltr" align="left"><code>Username: demo
-Password: demo1234</code></pre>
+</div>
+
+```text
+Username: demo
+Password: demo1234
+```
+
+<div dir="rtl" align="right">
 
 <p>برای متوقف‌کردن سرور، در ترمینال کلیدهای <code dir="ltr">Ctrl+C</code> را فشار دهید. برای اجرای مجدد برنامه کافی است ابتدا محیط مجازی را فعال کنید و سپس دوباره دستور <code dir="ltr">python manage.py runserver</code> را اجرا کنید.</p>
 
 <h3>اجرای تست‌ها</h3>
 
-<pre dir="ltr" align="left"><code class="language-bash">python manage.py test</code></pre>
+</div>
+
+```bash
+python manage.py test
+```
+
+<div dir="rtl" align="right">
 
 <h3>نکات</h3>
 
