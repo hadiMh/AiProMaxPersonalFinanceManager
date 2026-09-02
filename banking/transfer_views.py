@@ -57,6 +57,7 @@ class TransferUpdateView(UserOwnedMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
+        kwargs["transfer"] = self.transfer
         kwargs.setdefault("initial", {
             "from_card": self.transfer.from_card,
             "to_card": self.transfer.to_card,

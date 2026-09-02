@@ -8,6 +8,7 @@ from accounts.models import User
 from banking.models import BankCard
 from banking.services.transfers import create_transfer
 from transactions.models import CategoryType, Transaction, TransactionCategory, TransactionKind
+from transactions.services.setup import create_default_categories
 
 
 class Command(BaseCommand):
@@ -24,6 +25,8 @@ class Command(BaseCommand):
             self.stdout.write("Demo user created (username: demo, password: demo1234)")
         else:
             self.stdout.write("Demo user already exists — adding more data.")
+
+        create_default_categories(user)
 
         cash = user.bank_cards.get(is_cash=True)
         cards_data = [

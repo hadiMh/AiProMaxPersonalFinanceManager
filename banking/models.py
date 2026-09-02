@@ -38,6 +38,11 @@ class BankCard(models.Model):
                 condition=Q(is_cash=True),
                 name="unique_cash_card_per_user",
             ),
+            models.UniqueConstraint(
+                fields=["user", "card_number"],
+                condition=Q(card_number__isnull=False) & ~Q(card_number=""),
+                name="unique_card_number_per_user",
+            ),
         ]
 
     def __str__(self):
