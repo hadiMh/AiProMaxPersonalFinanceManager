@@ -1,9 +1,11 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 
 from banking.models import BankCard
 from core.forms import JalaliDateField
 from transactions.models import CategoryType, Transaction, TransactionCategory, TransactionKind
+from transactions.services.setup import create_default_categories
 
 
 class TransactionForm(forms.ModelForm):
@@ -26,25 +28,37 @@ class TransactionForm(forms.ModelForm):
         }
 
     def __init__(self, *args, user=None, **kwargs):
+        if user is None:
+            raise ValueError("TransactionForm requires user=")
         self.user = user
         super().__init__(*args, **kwargs)
-        if user:
-            self.fields["card"].queryset = BankCard.objects.filter(user=user, is_active=True)
+
+        cards = BankCard.objects.filter(user=user, is_active=True)
+        if self.instance.pk and self.instance.card_id:
+            cards = cards | BankCard.objects.filter(pk=self.instance.card_id)
+        self.fields["card"].queryset = cards.distinct()
+
+        categories = TransactionCategory.objects.filter(user=user)
+        if not categories.exists():
+            create_default_categories(user)
             categories = TransactionCategory.objects.filter(user=user)
-            category_field = self.fields["category"]
-            category_field.queryset = categories
-            category_field.required = False
-            category_field.choices = [("", "---------")]
-            income = categories.filter(category_type=CategoryType.INCOME)
-            expense = categories.filter(category_type=CategoryType.EXPENSE)
-            if income.exists():
-                category_field.choices.append(
-                    (CategoryType.INCOME.label, [(c.pk, c.name) for c in income])
-                )
-            if expense.exists():
-                category_field.choices.append(
-                    (CategoryType.EXPENSE.label, [(c.pk, c.name) for c in expense])
-                )
+
+        category_field = self.fields["category"]
+        category_field.queryset = categories
+        category_field.required = False
+        choices = [("", "---------")]
+        income = categories.filter(category_type=CategoryType.INCOME)
+        expense = categories.filter(category_type=CategoryType.EXPENSE)
+        if income.exists():
+            choices.append(
+                (CategoryType.INCOME.label, [(c.pk, c.name) for c in income])
+            )
+        if expense.exists():
+            choices.append(
+                (CategoryType.EXPENSE.label, [(c.pk, c.name) for c in expense])
+            )
+        category_field.choices = choices
+        category_field.widget.choices = choices
 
     def clean_amount(self):
         amount = self.cleaned_data["amount"]
@@ -80,11 +94,18 @@ class TransactionForm(forms.ModelForm):
         new_name = self.cleaned_data.get("new_category_name", "").strip()
         if new_name:
             cat_type = CategoryType.INCOME if instance.amount > 0 else CategoryType.EXPENSE
-            category, _ = TransactionCategory.objects.get_or_create(
-                user=self.user,
-                name=new_name,
-                category_type=cat_type,
-            )
+            try:
+                category, _ = TransactionCategory.objects.get_or_create(
+                    user=self.user,
+                    name=new_name,
+                    category_type=cat_type,
+                )
+            except IntegrityError:
+                category = TransactionCategory.objects.get(
+                    user=self.user,
+                    name=new_name,
+                    category_type=cat_type,
+                )
             instance.category = category
 
         if commit:

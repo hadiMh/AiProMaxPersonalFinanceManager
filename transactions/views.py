@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.db.models import Q
-from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from core.dates import jalali_to_gregorian
@@ -96,7 +97,9 @@ class TransactionUpdateView(UserOwnedMixin, UpdateView):
         obj = self.get_object()
         if obj.transaction_kind == TransactionKind.TRANSFER:
             messages.error(request, "تراکنش‌های انتقال را از صفحه انتقال‌ها ویرایش کنید.")
-            return self.http_method_not_allowed(request)
+            if obj.transfer_id:
+                return redirect(reverse("banking:transfer_edit", args=[obj.transfer_id]))
+            return redirect(reverse("banking:transfer_list"))
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
@@ -118,7 +121,9 @@ class TransactionDeleteView(UserOwnedMixin, DeleteView):
         obj = self.get_object()
         if obj.transaction_kind == TransactionKind.TRANSFER:
             messages.error(request, "تراکنش‌های انتقال را از صفحه انتقال‌ها حذف کنید.")
-            return self.http_method_not_allowed(request)
+            if obj.transfer_id:
+                return redirect(reverse("banking:transfer_delete", args=[obj.transfer_id]))
+            return redirect(reverse("banking:transfer_list"))
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -170,5 +175,11 @@ class CategoryDeleteView(UserOwnedMixin, DeleteView):
     success_url = reverse_lazy("transactions:category_list")
 
     def form_valid(self, form):
+        if self.object.transactions.filter(transaction_kind=TransactionKind.NORMAL).exists():
+            messages.error(
+                self.request,
+                "این دسته‌بندی در تراکنش‌ها استفاده شده و قابل حذف نیست.",
+            )
+            return redirect(self.success_url)
         messages.success(self.request, "دسته‌بندی با موفقیت حذف شد.")
         return super().form_valid(form)
