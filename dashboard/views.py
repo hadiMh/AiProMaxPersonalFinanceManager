@@ -47,6 +47,8 @@ class WeeklyDashboardView(UserOwnedMixin, TemplateView):
             try:
                 year = int(self.request.GET.get("year", default_year))
                 week = int(self.request.GET.get("week", default_week))
+                if week < 1 or week > 53:
+                    raise ValueError
             except (TypeError, ValueError):
                 messages.error(self.request, "سال یا شماره هفته معتبر نیست.")
                 year, week = default_year, default_week

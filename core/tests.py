@@ -40,6 +40,16 @@ class FinanceTestCase(TestCase):
         self.income_cat = TransactionCategory.objects.get(user=self.user, name="حقوق")
         self.expense_cat = TransactionCategory.objects.get(user=self.user, name="کافه و رستوران")
 
+    def _fund_card(self, card, amount=Decimal("100000000")):
+        Transaction.objects.create(
+            user=self.user,
+            card=card,
+            category=self.income_cat,
+            amount=amount,
+            title="سرمایه تست",
+            transaction_date=date.today(),
+        )
+
     def test_balance_starts_at_zero(self):
         self.assertEqual(self.card.balance, Decimal("0"))
 
@@ -70,10 +80,7 @@ class FinanceTestCase(TestCase):
         self.assertFalse(form.is_valid())
 
     def test_transfer_decreases_source_balance(self):
-        Transaction.objects.create(
-            user=self.user, card=self.card, category=self.income_cat,
-            amount=Decimal("10000000"), title="درآمد", transaction_date=date.today(),
-        )
+        self._fund_card(self.card, Decimal("10000000"))
         create_transfer(
             user=self.user, from_card=self.card, to_card=self.card2,
             amount=Decimal("3000000"), description="", transfer_date=date.today(),
@@ -81,10 +88,7 @@ class FinanceTestCase(TestCase):
         self.assertEqual(self.card.balance, Decimal("7000000"))
 
     def test_transfer_increases_destination_balance(self):
-        Transaction.objects.create(
-            user=self.user, card=self.card, category=self.income_cat,
-            amount=Decimal("10000000"), title="درآمد", transaction_date=date.today(),
-        )
+        self._fund_card(self.card, Decimal("10000000"))
         create_transfer(
             user=self.user, from_card=self.card, to_card=self.card2,
             amount=Decimal("3000000"), description="", transfer_date=date.today(),
@@ -92,14 +96,16 @@ class FinanceTestCase(TestCase):
         self.assertEqual(self.card2.balance, Decimal("3000000"))
 
     def test_transfer_not_income(self):
+        self._fund_card(self.card)
         create_transfer(
             user=self.user, from_card=self.card, to_card=self.card2,
             amount=Decimal("5000000"), description="", transfer_date=date.today(),
         )
         qs = transactions_in_range(self.user, date(2000, 1, 1), date(2100, 1, 1))
-        self.assertEqual(total_income(qs), Decimal("0"))
+        self.assertEqual(total_income(qs), Decimal("100000000"))
 
     def test_transfer_not_expense(self):
+        self._fund_card(self.card)
         create_transfer(
             user=self.user, from_card=self.card, to_card=self.card2,
             amount=Decimal("5000000"), description="", transfer_date=date.today(),
@@ -108,15 +114,19 @@ class FinanceTestCase(TestCase):
         self.assertEqual(total_expense(qs), Decimal("0"))
 
     def test_transfer_not_in_category_reports(self):
+        self._fund_card(self.card)
         create_transfer(
             user=self.user, from_card=self.card, to_card=self.card2,
             amount=Decimal("5000000"), description="", transfer_date=date.today(),
         )
         qs = transactions_in_range(self.user, date(2000, 1, 1), date(2100, 1, 1))
         self.assertEqual(category_breakdown(qs, CategoryType.EXPENSE), [])
-        self.assertEqual(category_breakdown(qs, CategoryType.INCOME), [])
+        income = category_breakdown(qs, CategoryType.INCOME)
+        self.assertEqual(len(income), 1)
+        self.assertEqual(income[0]["name"], "حقوق")
 
     def test_transfer_edit_syncs_transactions(self):
+        self._fund_card(self.card)
         transfer = create_transfer(
             user=self.user, from_card=self.card, to_card=self.card2,
             amount=Decimal("5000000"), description="اول", transfer_date=date.today(),
@@ -131,6 +141,7 @@ class FinanceTestCase(TestCase):
         self.assertEqual(transfer.incoming_transaction.amount, Decimal("8000000"))
 
     def test_transfer_delete_cleans_transactions(self):
+        self._fund_card(self.card)
         transfer = create_transfer(
             user=self.user, from_card=self.card, to_card=self.card2,
             amount=Decimal("5000000"), description="", transfer_date=date.today(),
@@ -175,6 +186,16 @@ class FinanceTestCase(TestCase):
 
     def test_default_categories_created(self):
         self.assertTrue(TransactionCategory.objects.filter(user=self.user).count() >= 18)
+
+    def test_transaction_form_renders_category_choices(self):
+        from transactions.forms import TransactionForm
+
+        form = TransactionForm(user=self.user)
+        html = str(form["category"])
+        self.assertIn("optgroup", html)
+        self.assertIn(self.income_cat.name, html)
+        self.assertIn(self.expense_cat.name, html)
+        self.assertGreater(html.count("<option"), 1)
 
     def test_zero_transaction_rejected_at_model(self):
         from django.core.exceptions import ValidationError
@@ -317,3 +338,67 @@ class FinanceTestCase(TestCase):
 
     def test_other_user_can_have_own_cash_card(self):
         self.assertTrue(BankCard.objects.filter(user=self.other, is_cash=True).exists())
+
+    def test_transfer_rejected_without_balance(self):
+        from django.core.exceptions import ValidationError
+
+        with self.assertRaises(ValueError):
+            create_transfer(
+                user=self.user,
+                from_card=self.card,
+                to_card=self.card2,
+                amount=Decimal("1000000"),
+                description="",
+                transfer_date=date.today(),
+            )
+
+    def test_category_delete_blocked_when_used(self):
+        client = Client()
+        client.login(username="testuser", password="testpass123")
+        Transaction.objects.create(
+            user=self.user,
+            card=self.card,
+            category=self.expense_cat,
+            amount=Decimal("-100000"),
+            title="هزینه",
+            transaction_date=date.today(),
+        )
+        response = client.post(
+            reverse("transactions:category_delete", args=[self.expense_cat.pk])
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(TransactionCategory.objects.filter(pk=self.expense_cat.pk).exists())
+
+    def test_update_transfer_recreates_missing_transactions(self):
+        from banking.services.transfers import update_transfer
+
+        self._fund_card(self.card)
+        transfer = create_transfer(
+            user=self.user,
+            from_card=self.card,
+            to_card=self.card2,
+            amount=Decimal("1000000"),
+            description="",
+            transfer_date=date.today(),
+        )
+        out_id = transfer.outgoing_transaction_id
+        in_id = transfer.incoming_transaction_id
+        transfer.outgoing_transaction.delete()
+        transfer.incoming_transaction.delete()
+        transfer.outgoing_transaction = None
+        transfer.incoming_transaction = None
+        transfer.save()
+
+        update_transfer(
+            transfer,
+            from_card=self.card,
+            to_card=self.card2,
+            amount=Decimal("2000000"),
+            description="بازسازی",
+            transfer_date=date.today(),
+        )
+        transfer.refresh_from_db()
+        self.assertIsNotNone(transfer.outgoing_transaction)
+        self.assertIsNotNone(transfer.incoming_transaction)
+        self.assertEqual(transfer.outgoing_transaction.amount, Decimal("-2000000"))
+        self.assertFalse(Transaction.objects.filter(pk__in=[out_id, in_id]).exists())
